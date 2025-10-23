@@ -77,67 +77,60 @@ Client-server chat applications are foundational to real-time communication over
 
 client
 
-```import socket
-
-
-def client_program():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
-
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
-
-    message = input(" -> ")  # take input
-
-    while message.lower().strip() != 'bye':
-        client_socket.send(message.encode())  # send message
-        data = client_socket.recv(1024).decode()  # receive response
-
-        print('Received from server: ' + data)  # show in terminal
-
-        message = input(" -> ")  # again take input
-
-    client_socket.close()  # close the connection
-
-
-if __name__ == '__main__':
-    client_program()
+```
+import socket
+s = socket.socket()
+host = input(str('Enter hostname or host IP : '))
+port= 8080
+s.connect((host, port))
+print('Connected to chat server')
+while 1:
+    incoming_message = s.recv(1024)
+    incoming_message =incoming_message.decode()
+    print(' Server : ',incoming_message)
+    print() 
+    message = input(str('>> '))
+    message =message.encode()
+    s.send(message)
+    print('Sent')
+    print()
 ```
 
 server
 ```
 import socket
-def server_program():
-    # get the hostname
-    host = socket.gethostname()
-    port = 5000  # initiate port no above 1024
-
-    server_socket = socket.socket()  # get instance
-    # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, port))  # bind host address and port together
-
-    # configure how many client the server can listen simultaneously
-    server_socket.listen(2)
-    conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))
-    while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        print("from connected user: " + str(data))
-        data = input(' -> ')
-        conn.send(data.encode())  # send data to the client
-
-    conn.close()  # close the connection
-
-
-if __name__ == '__main__':
-    server_program()
+s = socket.socket()
+host = socket.gethostname()
+print(' Server will start on host : ',host)
+port = 8080
+s.bind((host, port))
+print()
+print('Waiting for connection')
+print()
+s.listen(1)
+conn, addr = s.accept()
+print(addr, ' Has connected to theserver')
+print()
+while 1:
+    message =input(str('>> '))
+    message =message.encode()
+    conn.send(message)
+    print('Sent')
+    print()
+    incoming_message = conn.recv(1024)
+    incoming_message =incoming_message.decode()
+    print(' Client : ',incoming_message)
+    print()
 ```
 ## OUTPUT:
 
+CLIENT
+
+<img width="591" height="265" alt="image" src="https://github.com/user-attachments/assets/b8bf5bac-c88b-4da2-b7f8-ede4a9db21ce" />
+
+SERVER
+
+<img width="729" height="318" alt="image" src="https://github.com/user-attachments/assets/56f6c496-ce93-49ad-b854-390d4bedfc90" />
 
 
 ## Result:
